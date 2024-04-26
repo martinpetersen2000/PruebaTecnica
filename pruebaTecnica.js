@@ -1,16 +1,17 @@
-const llamadasLocales = [
-  { duracion: 30, hora: 10, dia: "lunes" },
-  { duracion: 20, hora: 19, dia: "miércoles" },
+const localCalls = [
+  { duration: 30, hour: 10, day: "Monday" },
+  { duration: 20, hour: 19, day: "Wednesday" },
 ];
 
-const llamadasNacionales = [
-  { duracion: 45, localidad: "Buenos Aires" },
-  { duracion: 10, localidad: "Córdoba" },
-  { duracion: 18, localidad: "Santa Fe" },
-  { duracion: 20, localidad: "Misiones" },
-  { duracion: 30, localidad: "Tucumán" },
+const nationalCalls = [
+  { duration: 45, locality: "Buenos Aires" },
+  { duration: 10, locality: "Córdoba" },
+  { duration: 18, locality: "Santa Fe" },
+  { duration: 20, locality: "Misiones" },
+  { duration: 30, locality: "Tucumán" },
 ];
-const tarifasNacionales = {
+
+const nationalRates = {
   "Buenos Aires": 0.3,
   Córdoba: 0.25,
   Tucumán: 0.25,
@@ -18,136 +19,130 @@ const tarifasNacionales = {
   Misiones: 0.25,
 };
 
-const llamadasInternacionales = [
-  { duracion: 60, pais: "Estados Unidos" },
-  { duracion: 20, pais: "Argentina" },
-  { duracion: 40, pais: "Suecia" },
-  { duracion: 25, pais: "Italia" },
-  { duracion: 10, pais: "España" },
+const internationalCalls = [
+  { duration: 60, country: "United States" },
+  { duration: 20, country: "Argentina" },
+  { duration: 40, country: "Sweden" },
+  { duration: 25, country: "Italy" },
+  { duration: 10, country: "Spain" },
 ];
 
-const tarifasInternacionales = {
-  "Estados Unidos": 0.3,
-  España: 0.5,
+const internationalRates = {
+  "United States": 0.3,
+  Spain: 0.5,
   Argentina: 0.25,
-  Suecia: 0.2,
-  Italia: 0.3,
+  Sweden: 0.2,
+  Italy: 0.3,
 };
-class Factura {
+
+class Invoice {
   constructor(
-    abonoBasico,
-    consumoLlamadasLoc,
-    consumoLlamadasNac,
-    consumoLlamadasInt
+    basicFee,
+    localCallsConsumption,
+    nationalCallsConsumption,
+    internationalCallsConsumption
   ) {
-    this.abonoBasico = abonoBasico;
-    this.consumoLlamadasLoc = consumoLlamadasLoc;
-    this.consumoLlamadasNac = consumoLlamadasNac;
-    this.consumoLlamadasInt = consumoLlamadasInt;
+    this.basicFee = basicFee;
+    this.localCallsConsumption = localCallsConsumption;
+    this.nationalCallsConsumption = nationalCallsConsumption;
+    this.internationalCallsConsumption = internationalCallsConsumption;
   }
-  mostrarDesgloseLlamadas() {
-    console.log("Detalle de llamadas locales:");
-    this.consumoLlamadasLoc.forEach((llamada) => {
-      console.log(`Duración: ${llamada.duracion} minutos`);
+
+  showCallBreakdown() {
+    console.log("Detail of local calls:");
+    this.localCallsConsumption.forEach((call) => {
+      console.log(`Duration: ${call.duration} minutes`);
     });
 
-    console.log("Detalle de llamadas nacionales:");
-    this.consumoLlamadasNac.forEach((llamada) => {
+    console.log("Detail of national calls:");
+    this.nationalCallsConsumption.forEach((call) => {
       console.log(
-        `Duración: ${llamada.duracion} minutos, Localidad: ${llamada.localidad}`
+        `Duration: ${call.duration} minutes, Locality: ${call.locality}`
       );
     });
 
-    console.log("Detalle de llamadas internacionales:");
-    this.consumoLlamadasInt.forEach((llamada) => {
+    console.log("Detail of international calls:");
+    this.internationalCallsConsumption.forEach((call) => {
       console.log(
-        `Duración: ${llamada.duracion} minutos, País: ${llamada.pais}`
+        `Duration: ${call.duration} minutes, Country: ${call.country}`
       );
     });
   }
 
-  mostrarTarifasLlamadas() {
-    console.log("Tarifas aplicadas a las llamadas:");
-    console.log("Tarifas de llamadas locales:");
-    console.log("Horario hábil: $0.20 por minuto");
-    console.log("Resto del día y fines de semana: $0.10 por minuto");
+  showCallRates() {
+    console.log("Rates applied to calls:");
+    console.log("Rates for local calls:");
+    console.log("Business hours: $0.20 per minute");
+    console.log("Rest of the day and weekends: $0.10 per minute");
 
-    console.log("Tarifas de llamadas nacionales:");
-    for (const localidad in tarifasNacionales) {
+    console.log("Rates for national calls:");
+    for (const locality in nationalRates) {
       console.log(
-        `Localidad: ${localidad}, Tarifa: $${tarifasNacionales[localidad]} por minuto`
+        `Locality: ${locality}, Rate: $${nationalRates[locality]} per minute`
       );
     }
 
-    console.log("Tarifas de llamadas internacionales:");
-    for (const pais in tarifasInternacionales) {
+    console.log("Rates for international calls:");
+    for (const country in internationalRates) {
       console.log(
-        `País: ${pais}, Tarifa: $${tarifasInternacionales[pais]} por minuto`
+        `Country: ${country}, Rate: $${internationalRates[country]} per minute`
       );
     }
   }
-  calcularTotalAPagar() {
-    let totalLlamadasLocales = 0;
-    let totalLlamadasNacionales = 0;
-    let totalLlamadasInternacionales = 0;
-    let totalGeneral = 0;
 
-    this.consumoLlamadasLoc.forEach((llamada) => {
-      let costoLlamada = 0;
-      const esDiaHabil =
-        llamada.dia.toLowerCase() !== "sabado" &&
-        llamada.dia.toLowerCase() !== "domingo";
+  calculateTotalToPay() {
+    let totalLocalCalls = 0;
+    let totalNationalCalls = 0;
+    let totalInternationalCalls = 0;
+    let totalOverall = 0;
 
-      if (esDiaHabil && llamada.hora >= 8 && llamada.hora < 20) {
-        costoLlamada = llamada.duracion * 0.2;
+    this.localCallsConsumption.forEach((call) => {
+      let callCost = 0;
+      const isBusinessDay =
+        call.day.toLowerCase() !== "saturday" &&
+        call.day.toLowerCase() !== "sunday";
+
+      if (isBusinessDay && call.hour >= 8 && call.hour < 20) {
+        callCost = call.duration * 0.2;
       } else {
-        costoLlamada = llamada.duracion * 0.1;
+        callCost = call.duration * 0.1;
       }
-      totalLlamadasLocales += costoLlamada;
+      totalLocalCalls += callCost;
     });
 
-    this.consumoLlamadasNac.forEach((llamada) => {
-      let costoLlamada = 0;
-      const tarifa = tarifasNacionales[llamada.localidad];
-      if (tarifa) {
-        costoLlamada = llamada.duracion * tarifa;
+    this.nationalCallsConsumption.forEach((call) => {
+      let callCost = 0;
+      const rate = nationalRates[call.locality];
+      if (rate) {
+        callCost = call.duration * rate;
       } else {
-        console.log(
-          `No se encontró una tarifa para la localidad "${llamada.localidad}"`
-        );
+        console.log(`No rate found for locality "${call.locality}"`);
       }
-      totalLlamadasNacionales += costoLlamada;
+      totalNationalCalls += callCost;
     });
 
-    this.consumoLlamadasInt.forEach((llamada) => {
-      let costoLlamada = 0;
-      const tarifa = tarifasInternacionales[llamada.pais];
+    this.internationalCallsConsumption.forEach((call) => {
+      let callCost = 0;
+      const rate = internationalRates[call.country];
 
-      if (tarifa) {
-        costoLlamada = llamada.duracion * tarifa;
+      if (rate) {
+        callCost = call.duration * rate;
       } else {
-        console.log(`No se encontró una tarifa para el país "${llamada.pais}"`);
+        console.log(`No rate found for country "${call.country}"`);
       }
-      totalLlamadasInternacionales += costoLlamada;
+      totalInternationalCalls += callCost;
     });
-    totalGeneral =
-      totalLlamadasLocales +
-      totalLlamadasNacionales +
-      totalLlamadasInternacionales;
-    return totalGeneral;
+    totalOverall =
+      totalLocalCalls + totalNationalCalls + totalInternationalCalls;
+    return totalOverall;
   }
 }
 
-const factura = new Factura(
-  50,
-  llamadasLocales,
-  llamadasNacionales,
-  llamadasInternacionales
-);
-console.log("Total a pagar: " + factura.calcularTotalAPagar());
+const invoice = new Invoice(50, localCalls, nationalCalls, internationalCalls);
+console.log("Total to pay: " + invoice.calculateTotalToPay());
 
-console.log("Detalle de llamadas:");
-factura.mostrarDesgloseLlamadas();
+console.log("Call details:");
+invoice.showCallBreakdown();
 
-console.log("\nTarifas de las llamadas:");
-factura.mostrarTarifasLlamadas();
+console.log("\nCall rates:");
+invoice.showCallRates();
